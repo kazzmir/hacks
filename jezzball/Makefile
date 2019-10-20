@@ -1,0 +1,2 @@
+jezzball:
+	scons

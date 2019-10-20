@@ -1,0 +1,54 @@
+import os
+
+env = Environment( ENV = os.environ )
+
+def isLinux():
+	import re
+	import sys
+	return re.compile( '.*linux.*' ).match( sys.platform ) 
+
+def isWindows():
+	import re
+	import sys
+	return re.compile( '.*win32.*' ).match( sys.platform )
+
+sources = map( lambda x: 'build/%s' % x, Split("""
+ball.cpp
+bitmap.cpp
+box.cpp
+button.cpp
+funcs.cpp
+game.cpp
+landscape.cpp
+main.cpp
+mouse.cpp
+player.cpp
+region.cpp
+score.cpp
+"""))
+
+sources.append( map( lambda x: 'build/loadpng/%s' % x, Split("""
+loadpng.c
+regpng.c
+savepng.c
+""")));
+
+# env.Append( LIBS = ['jpgal'] )
+
+if isWindows():
+	env.Append( LIBS = ['png', 'alleg'] )
+else:
+	env.ParseConfig( 'allegro-config --libs --cflags' )
+	env.ParseConfig( 'libpng-config --libs' )
+
+env.Append( CCFLAGS = '-O2' )
+
+env.BuildDir( 'build', 'src' )
+
+try:
+	if os.environ[ 'DEBUG' ]:
+		env.Append( CCFLAGS = '-g3' )
+except KeyError:
+	pass
+
+env.Program( 'jezzball', sources )
