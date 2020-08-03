@@ -82,9 +82,9 @@ void set_colors() {
         k2.r = 0;
         k2.g = 15;
         k2.b = 63;
-        PALETTE suck;
-        blend_palette( suck, 100, k1, 200, k2 );
-        set_palette( suck );
+        PALETTE s;
+        blend_palette( s, 100, k1, 200, k2 );
+        set_palette( s );
 }
 
 
@@ -126,11 +126,11 @@ int main() {
                                 putpixel( work, x, y, z-1 );
                 }
 
-                PALETTE gay;
-                get_palette( gay );
+                PALETTE g1;
+                get_palette( g1 );
                 for ( int q = 101; q <= 200; q++ )
-                        gay[q].r = col;
-                set_palette( gay );
+                        g1[q].r = col;
+                set_palette( g1 );
                 col += dir;
                 if ( col >= 63 || col <= 0 )
                         dir *= -1;
