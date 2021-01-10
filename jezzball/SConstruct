@@ -12,7 +12,7 @@ def isWindows():
 	import sys
 	return re.compile( '.*win32.*' ).match( sys.platform )
 
-sources = map( lambda x: 'build/%s' % x, Split("""
+sources = list(map( lambda x: 'build/%s' % x, Split("""
 ball.cpp
 bitmap.cpp
 box.cpp
@@ -25,13 +25,13 @@ mouse.cpp
 player.cpp
 region.cpp
 score.cpp
-"""))
+""")))
 
-sources.append( map( lambda x: 'build/loadpng/%s' % x, Split("""
+sources.append(list(map( lambda x: 'build/loadpng/%s' % x, Split("""
 loadpng.c
 regpng.c
 savepng.c
-""")));
+"""))))
 
 # env.Append( LIBS = ['jpgal'] )
 
@@ -43,7 +43,7 @@ else:
 
 env.Append( CCFLAGS = '-O2' )
 
-env.BuildDir( 'build', 'src' )
+env.VariantDir('build', 'src')
 
 try:
 	if os.environ[ 'DEBUG' ]:
@@ -51,4 +51,4 @@ try:
 except KeyError:
 	pass
 
-env.Program( 'jezzball', sources )
+env.Program('jezzball', sources)
