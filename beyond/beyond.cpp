@@ -2,6 +2,7 @@
 //#include "trigtable.h"
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
 
 #define screen_x 640
 #define screen_y 480
@@ -170,7 +171,7 @@ void check( int x, int y, int col, int dir ) {
 
 void draw_em() {
 
-        textprintf( work, font, 400, 10, 31, "LEVEL:%d", max_level-LEVEL );
+        textprintf_ex( work, font, 400, 10, 31, -1, "LEVEL:%d", max_level-LEVEL );
 
         rect( work, min_x-2, min_y-2,
                 max_x*block_x_size+min_x+2,
@@ -281,7 +282,7 @@ void move_block( column & me ) {
 
                 for ( int z = 0; z < me.blocks; z++ )
                 if ( me.y-z < 0 ) {
-                        textprintf( screen, font, 100, 100, 31, "You lose");
+                        textprintf_ex( screen, font, 100, 100, 31, -1, "You lose");
                         LEVEL = 1;
                         while ( !key[KEY_ESC] );
                 }
@@ -339,54 +340,61 @@ void move( column & me, int much ) {
 
 int main() {
 
-        init();
-        column act;
-        reset( act );
-	int time = 0;
-        while ( !key[KEY_ESC] && LEVEL > 1 ) {
+    init();
+    column act;
+    reset( act );
+    int time = 0;
 
-		bool draw = false;
-                // grand_clock++;
-		while ( grand_clock > 0 ){
-			draw = true;
-			grand_clock--;
-			time++;
-			if ( key[KEY_5_PAD] && hit_change == 0) {
-				change_block( act );
-				hit_change = 12;
-			}
-			if ( key[KEY_4_PAD] && left_key == 0 ) {
-				move( act, -1 );
-				left_key = max_key;
-			}
-			if ( key[KEY_6_PAD] && right_key == 0 ) {
-				move( act, +1 );
-				right_key = max_key;
-			}
-			if ( left_key > 0 )
-				left_key--;
-			if ( right_key > 0 )
-				right_key--;
-			if ( hit_change > 0 )
-				hit_change--;
+    printf("Keys are:\n");
+    printf("Q: move block left\n");
+    printf("E: move block right\n");
+    printf("S: move block down\n");
+    printf("W: rotate block colors\n");
 
-			if ( time % (LEVEL+10) == 0 || ( time % 3 == 0 && key[KEY_2_PAD] ) ){
-				move_block( act );
-			}
+    while ( !key[KEY_ESC] && LEVEL > 1 ) {
 
-		}
+        bool draw = false;
+        // grand_clock++;
+        while ( grand_clock > 0 ){
+            draw = true;
+            grand_clock--;
+            time++;
+            if ( key[KEY_W] && hit_change == 0) {
+                change_block( act );
+                hit_change = 12;
+            }
+            if ( key[KEY_Q] && left_key == 0 ) {
+                move( act, -1 );
+                left_key = max_key;
+            }
+            if ( key[KEY_E] && right_key == 0 ) {
+                move( act, +1 );
+                right_key = max_key;
+            }
+            if ( left_key > 0 )
+                left_key--;
+            if ( right_key > 0 )
+                right_key--;
+            if ( hit_change > 0 )
+                hit_change--;
 
-		if ( draw ){
-			draw_map(act);
-			blit( work, screen, 0, 0, 0, 0, 640, 480 );
-			clear( work );
-		}
+            if ( time % (LEVEL+10) == 0 || ( time % 3 == 0 && key[KEY_S] ) ){
+                move_block( act );
+            }
 
-		while ( grand_clock == 0 ){
-			rest( 1 );
-		}
         }
-        destroy_bitmap( work );
+
+        if ( draw ){
+            draw_map(act);
+            blit( work, screen, 0, 0, 0, 0, 640, 480 );
+            clear( work );
+        }
+
+        while ( grand_clock == 0 ){
+            rest( 1 );
+        }
+    }
+    destroy_bitmap( work );
 
 }
 
